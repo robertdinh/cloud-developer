@@ -75,7 +75,6 @@ handler.use(
   secretsManager({
     cache: true,
     cacheExpiryInMillis: 60000,
-    // Throw an error if can't read the secret
     throwOnFailedCall: true,
     secrets: {
       AUTH0_SECRET: secretId

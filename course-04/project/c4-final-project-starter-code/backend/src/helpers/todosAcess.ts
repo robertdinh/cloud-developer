@@ -22,7 +22,7 @@ export class TodosAccess {
             TableName: this.todosTable,
             Item: todo
         }).promise()
-        logger.info('Todo item: ' + todo);
+        logger.info('Todo item: ', todo);
         return todo
     }
 
@@ -34,7 +34,7 @@ export class TodosAccess {
             KeyConditionExpression: "#DYNOBASE_userId = :pkey",
             ExpressionAttributeValues: {
               ":pkey": userId
-            },
+            },  
             ExpressionAttributeNames: {
               "#DYNOBASE_userId": "userId"
             },
@@ -44,7 +44,7 @@ export class TodosAccess {
         const result = await this.docClient.query(params).promise();
           
         const items = result.Items
-        logger.info('Todo list: ' + items);
+        logger.info('Todo list: ', items);
         return items as TodoItem[]
     }
 
@@ -69,12 +69,12 @@ export class TodosAccess {
             if (err) logger.console.error(err);
             else logger.log(data);
         }).promise()
-        logger.info('Updated item: ' + todoUpdate);
+        logger.info('Updated item: ', todoUpdate);
         return todoUpdate
     }
 
     async updateAttachmentUrl(userId: string, todoId: string, uploadUrl: string): Promise<string> {
-        logger.info('updateAttachmentUrl '+ uploadUrl);
+        logger.info('updateAttachmentUrl ', uploadUrl);
         var params = {
             TableName: this.todosTable,
             Key: {
@@ -91,7 +91,7 @@ export class TodosAccess {
             if (err) logger.console.error(err);
             else logger.log(data);
         }).promise()
-        logger.info('updated url: ' + uploadUrl);
+        logger.info('updated url: ', uploadUrl);
         return uploadUrl
     }
 
@@ -109,6 +109,6 @@ export class TodosAccess {
             if (err) logger.console.error(err);
             else logger.log(data);
         })
-        logger.info('deleted item id: ' + todoId);
+        logger.info('deleted item id: ', todoId);
     }
 }
