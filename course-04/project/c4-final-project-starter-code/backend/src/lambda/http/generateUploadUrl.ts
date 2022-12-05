@@ -4,15 +4,17 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
 import { v4 as uuidv4 } from 'uuid'
-import { createAttachmentPresignedUrl } from '../../businessLogic/todos'
+import { updateAttachmentUrl } from '../../businessLogic/todos'
 import { getUserId } from '../utils'
+import { AttachmentUtils } from '../../helpers/attachmentUtils'
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
     const userId = getUserId(event)
     const attachmentId = uuidv4()
-    let uploadUrl = await attachmentUtils.createAttachmentPresignedUrl(attachmentId);
+    const attachmentUtils = new AttachmentUtils()
+    let uploadUrl = await attachmentUtils.createAttachmentUrl(attachmentId);
     const attachmentUrl = await attachmentUtils.getAttachmentUrl(attachmentId)
     await updateAttachmentUrl(userId, todoId, attachmentUrl)
     return {
