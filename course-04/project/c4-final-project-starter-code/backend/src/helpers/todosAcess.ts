@@ -1,20 +1,19 @@
 import * as AWS from 'aws-sdk'
-import * as AWSXRay from 'aws-xray-sdk'
+// import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate';
 
-const XAWS = AWSXRay.captureAWS(AWS)
+// const XAWS = AWSXRay.captureAWS(AWS)
 
 const logger = createLogger('TodosAccess')
 
 export class TodosAccess {
 
     constructor(
-        private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
-        private readonly todosTable = process.env.TODOS_TABLE) {
-    }
+        private readonly docClient: DocumentClient = new AWS.DynamoDB.DocumentClient(),
+        private readonly todosTable = process.env.TODOS_TABLE) {}
 
     async createTodo(todo: TodoItem): Promise<TodoItem> {
         logger.info('CreateTodo');
@@ -66,8 +65,8 @@ export class TodosAccess {
         };
 
         await this.docClient.update(params, function (err, data) {
-            if (err) logger.console.error(err);
-            else logger.log(data);
+            if (err) logger.error(err);
+            else logger.info(data);
         }).promise()
         logger.info('Updated item: ', todoUpdate);
         return todoUpdate
@@ -88,8 +87,8 @@ export class TodosAccess {
         };
 
         await this.docClient.update(params, function (err, data) {
-            if (err) logger.console.error(err);
-            else logger.log(data);
+            if (err) logger.error(err);
+            else logger.info(data);
         }).promise()
         logger.info('updated url: ', uploadUrl);
         return uploadUrl
@@ -106,8 +105,8 @@ export class TodosAccess {
         };
 
         await this.docClient.delete(params, function (err, data) {
-            if (err) logger.console.error(err);
-            else logger.log(data);
+            if (err) logger.error(err);
+            else logger.info(data);
         })
         logger.info('deleted item id: ', todoId);
     }
