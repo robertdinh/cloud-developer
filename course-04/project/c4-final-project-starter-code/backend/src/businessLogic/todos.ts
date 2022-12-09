@@ -1,4 +1,5 @@
-import { TodosAccess } from './todosAcess'
+import { TodosAccess } from '../helpers/todosAcess'
+// import { createAttachmentPresignedUrl } from './attachmentUtils';
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
@@ -22,12 +23,12 @@ export async function createTodo(userId: string, newTodo: CreateTodoRequest): Pr
     ...newTodo,
     attachmentUrl: ''
   }
-  logger.info('Create Todo: ', newItem);
+  logger.info('Create Todo Item: ', newItem);
   return await todosAccess.createTodo(newItem)
 }
 
-export async function getTodosPerUser(userId: string): Promise<TodoItem[]> {
-  logger.info('Get List Todos Per User: ', userId);
+export async function getTodosForUser(userId: string): Promise<TodoItem[]> {
+  logger.info('UserId: ', userId);
   return todosAccess.getTodosPerUser(userId)
 }
   
@@ -35,17 +36,17 @@ export async function updateTodo(userId: string, todoId: string, updatedTodo: Up
   let todoUpdate: TodoUpdate = {
     ...updatedTodo
   }
-  logger.info('Update Todo Item: ', {"userId": userId, "todoId": todoId, "todoUpdate": todoUpdate});
+  logger.info('Update detail: ', {"userId": userId, "todoId": todoId, "todoUpdate": todoUpdate});
   return todosAccess.updateTodo(userId, todoId, todoUpdate)
 }
 
 export async function updateAttachmentUrl(userId: string, todoId: string, attachmentUrl: string): Promise<string> {
-  logger.info('Attachment URL: ', {"userId":userId, "todoId": todoId, "attachmentUrl": attachmentUrl});
+  logger.info('Update Attach: ', {"userId": userId, "todoId": todoId, "attachmentUrl": attachmentUrl});
   return todosAccess.updateAttachmentUrl(userId, todoId, attachmentUrl)
 }
 
-export async function deleteTodo(userId: string, todoId: string) {
-  logger.info('Delete Todo Item: ', {"userId": userId, "todoId": todoId});
-  return todosAccess.deleteTodo(userId, todoId)
-}
-
+  export async function deleteTodo(userId: string, todoId: string) {
+    logger.info('Delete Todo: ', { "todoId": todoId, "userId": userId });
+    return todosAccess.deleteTodo(userId, todoId)
+    
+  }
