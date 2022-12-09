@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0700d24-79ec-487e-8403-b565bef7f8e0",
+		"_postman_id": "6231f2c1-6c8e-4d4c-b448-1ba267ad29e3",
 		"name": "Udacity C4 Project",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -19,10 +19,6 @@
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos",
 							"protocol": "https",
@@ -200,7 +196,6 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "ce2b42d4-8cc5-4f30-a6ed-e7f0f303c3fd",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -210,7 +205,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "efb16c49-3866-4241-97d1-360ad72736d8",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -224,7 +218,6 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "2e83c0fe-6650-44d5-a90f-4c27ff720d83",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -234,7 +227,6 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "977c227e-2df3-42eb-9a48-ec25e2f7eeae",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -244,15 +236,13 @@
 	],
 	"variable": [
 		{
-			"id": "bf208e6b-f66d-4008-9366-dd541ff65425",
 			"key": "apiId",
-			"value": "",
+			"value": "ar2e53vqw4",
 			"type": "string"
 		},
 		{
-			"id": "9bc6399a-d2bb-4f2d-9ffa-8480370d383c",
 			"key": "authToken",
-			"value": "",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjlwcU4tcHMtNV80TnNjeHNTYjdnUiJ9.eyJpc3MiOiJodHRwczovL2Rldi1wODAxYzNnbS51cy5hdXRoMC5jb20vIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDE1MjA4Njc5NTYwMzU1MTI5NjEiLCJhdWQiOiJRZDZxemJEUjhDWEZtYXlSM2tFMFlMTTFXdTd4Y2xBTCIsImlhdCI6MTY3MDU1MDc0MSwiZXhwIjoxNjcwNTg2NzQxLCJhdF9oYXNoIjoicEpsWnZmNTZJb2J5TU1Idzl6dk1rUSIsInNpZCI6IjBNQm9YdnJTLVJxQkNUbXFJNm9ESkJaSmFMeTlFQU5MIiwibm9uY2UiOiJOQWF0aFNHdThFc01hRDZvcEo3flpZQn5tMEFLcjhNdyJ9.QSFqXXouuUw2Pqen8S6bsDk9GT5DNfVIYRfM1p_mlr1DDFuxQ1LIDCkIgFJOtvCKAvUDNS4kLzwXAxKtIenO5v6maoTKDzl2V3pHgCcti2jbKcsHHCJukNuxmfkv3N9qMy4igewjT--GYbyR5LiWYf8GNydkSe38DH0cDd_AIG_idl6kSFwNNHfp7Br9mmXGhjQYeizDRrkx2OpY1-NPNe3QSEwxPNHr7Co8hWW8moUJUi8j8zyEkeJt6jnKcPpK1Lx69Acl9Act5WC8TkmF2nUavSTLCChitc4Ti3t8RD_2QGEK7tuubwJLfXta3PRTAxA3fqTC4T8GkqYNEA_WkQ",
 			"type": "string"
 		}
 	]
