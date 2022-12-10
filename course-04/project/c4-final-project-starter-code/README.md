@@ -10,7 +10,7 @@ URL: https://app.serverless.com/robertdinh/apps/serverless-todo-app/serverless-t
 
 # Endpoint backend
 
-URL: https://ar2e53vqw4.execute-api.us-east-1.amazonaws.com/dev/todos
+URL: https://z8cgr773ch.execute-api.us-east-1.amazonaws.com/dev/todos
 
 ![Endpoint backend](images/api-endpoint.png?raw=true "Endpoint backend")
 
