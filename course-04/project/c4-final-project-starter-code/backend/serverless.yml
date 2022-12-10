@@ -50,10 +50,10 @@ custom:
           title: Todo serverless app
           description: "APIs for todo app"
       models:
-        - name: CreateTodoRequestModel
+        - name: CreateTodoRequest
           contentType: application/json
           schema: ${file(models/create-todo-model.json)}
-        - name: UpdateTodoRequestModel
+        - name: UpdateTodoRequest
           contentType: application/json
           schema: ${file(models/update-todo-model.json)}
 
@@ -93,7 +93,7 @@ functions:
             summary: Create a new todo
             description: Create a new todo
             requestModels:
-              'application/json': CreateTodoRequestModel
+              'application/json': CreateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -113,7 +113,7 @@ functions:
             summary: Update a todo
             description: Update a todo
             requestModels:
-              'application/json': UpdateTodoRequestModel
+              'application/json': UpdateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -227,3 +227,12 @@ resources:
               Action: '*'
               Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
+
+    RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
