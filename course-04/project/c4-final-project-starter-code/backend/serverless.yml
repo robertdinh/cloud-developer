@@ -21,12 +21,10 @@ provider:
     lambda: true
     apiGateway: true
 
-  # Use these variables in the functions and resouorces section below. For example, 
-  # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
-    ATTACHMENT_S3_BUCKET: robertdinh-${self:provider.stage}
+    ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-${self:provider.stage}-jacknguyen
     SIGNED_URL_EXPIRATION: 300
 
   logs:
@@ -41,14 +39,18 @@ provider:
             - xray:PutTelemetryRecords
             - xray:PutTraceSegments
           Resource: "*"
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+          Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_CREATED_AT_INDEX}
 
 custom:
   documentation: 
       api:
         info:
           version: v1.0.0
-          title: Todo serverless app
-          description: "APIs for todo app"
+          title: Todo API
+          description: "Serverless application"
       models:
         - name: CreateTodoRequest
           contentType: application/json
@@ -58,7 +60,6 @@ custom:
           schema: ${file(models/update-todo-model.json)}
 
 functions:
-
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
@@ -87,11 +88,10 @@ functions:
       - http:
           method: post
           path: todos
+          reqValidatorName: RequestBodyValidator
           cors: true
           authorizer: Auth
-          reqValidatorName: RequestBodyValidator
           documentation:
-            summary: Create a new todo
             description: Create a new todo
             requestModels:
               'application/json': CreateTodoRequest
@@ -106,20 +106,20 @@ functions:
     handler: src/lambda/http/updateTodo.handler
     events:
       - http:
-          method: put
+          method: patch
           path: todos/{todoId}
           cors: true
           authorizer: Auth
           documentation:
-            summary: Update a todo
             description: Update a todo
             requestModels:
               'application/json': UpdateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
+          - dynamodb:Query
           - dynamodb:UpdateItem
-        Resource: !GetAtt TodosTable.Arn
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
@@ -169,7 +169,7 @@ resources:
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: ApiGatewayRestApi
-    
+
     TodosTable:
       Type: AWS::DynamoDB::Table
       Properties:
