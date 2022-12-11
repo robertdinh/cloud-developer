@@ -14,7 +14,7 @@ import {
   Loader
 } from 'semantic-ui-react'
 
-import { createTodo, deleteTodo, getTodos, patchTodo } from '../api/todos-api'
+import { createTodo, deleteTodo, getTodos, patchTodo, getUploadUrl, uploadFile } from '../api/todos-api'
 import Auth from '../auth/Auth'
 import { Todo } from '../types/Todo'
 
@@ -26,14 +26,24 @@ interface TodosProps {
 interface TodosState {
   todos: Todo[]
   newTodoName: string
-  loadingTodos: boolean
+  loadingTodos: boolean,
+  file: any
+  uploadState: UploadState
+}
+
+enum UploadState {
+  NoUpload,
+  FetchingPresignedUrl,
+  UploadingFile,
 }
 
 export class Todos extends React.PureComponent<TodosProps, TodosState> {
   state: TodosState = {
     todos: [],
     newTodoName: '',
-    loadingTodos: true
+    loadingTodos: true,
+    file: undefined,
+    uploadState: UploadState.NoUpload
   }
 
   handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,18 +54,41 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     this.props.history.push(`/todos/${todoId}/edit`)
   }
 
+  setUploadState(uploadState: UploadState) {
+    this.setState({
+      uploadState
+    })
+  }
+
   onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
+      this.setState({
+        loadingTodos: true
+      })
       const dueDate = this.calculateDueDate()
       const newTodo = await createTodo(this.props.auth.getIdToken(), {
         name: this.state.newTodoName,
         dueDate
       })
+
+      if (this.state.file) {
+        this.setUploadState(UploadState.FetchingPresignedUrl)
+        console.log('newId: ', newTodo.todoId)
+        const uploadUrl = await getUploadUrl(this.props.auth.getIdToken(), newTodo.todoId)
+
+        this.setUploadState(UploadState.UploadingFile)
+        const uploaded = await uploadFile(uploadUrl, this.state.file)
+        console.log(uploaded)
+      }
+      
+      const todos = await getTodos(this.props.auth.getIdToken())
       this.setState({
-        todos: [...this.state.todos, newTodo],
-        newTodoName: ''
+        todos,
+        loadingTodos: false
       })
-    } catch {
+
+    } catch(e) {
+      console.log(e)
       alert('Todo creation failed')
     }
   }
@@ -113,28 +146,47 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     )
   }
 
+  handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files) return
+
+    this.setState({
+      file: files[0]
+    })
+  }
+
   renderCreateTodoInput() {
     return (
-      <Grid.Row>
-        <Grid.Column width={16}>
-          <Input
-            action={{
-              color: 'teal',
-              labelPosition: 'left',
-              icon: 'add',
-              content: 'New task',
-              onClick: this.onTodoCreate
-            }}
-            fluid
-            actionPosition="left"
-            placeholder="To change the world..."
-            onChange={this.handleNameChange}
-          />
-        </Grid.Column>
-        <Grid.Column width={16}>
-          <Divider />
-        </Grid.Column>
-      </Grid.Row>
+      <Grid divided='vertically'>
+        <Grid.Row columns={2}>
+          <Grid.Column width={12} floated="left">
+            <Input
+              action={{
+                color: 'teal',
+                labelPosition: 'left',
+                icon: 'add',
+                content: 'New task',
+                onClick: this.onTodoCreate
+              }}
+              fluid
+              actionPosition="left"
+              placeholder="To change the world..."
+              onChange={this.handleNameChange}
+            />
+          </Grid.Column>
+          <Grid.Column width={4} floated="right">
+          <input
+                type="file"
+                accept="image/*"
+                placeholder="Image to upload"
+                onChange={this.handleFileChange}
+              />
+          </Grid.Column>
+          <Grid.Column width={16}>
+            <Divider />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     )
   }
 
@@ -158,7 +210,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
 
   renderTodosList() {
     return (
-      <Grid padded>
+      <Grid padded columns={2}>
         {this.state.todos.map((todo, pos) => {
           return (
             <Grid.Row key={todo.todoId}>
