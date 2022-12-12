@@ -2,9 +2,9 @@
 
 Project 5 Serverless TODO application result
 
-# Improve UI
+# New feature
 
-![Improve UI](images/improve-ui.png?raw=true "Improve UI")
+![New feature](images/new-feature.png?raw=true "New feature")
 
 # Serverless Dashboard
 
