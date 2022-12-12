@@ -11,7 +11,10 @@ import {
   Icon,
   Input,
   Image,
-  Loader
+  Loader,
+  Label,
+  Item, 
+  Form
 } from 'semantic-ui-react'
 
 import { createTodo, deleteTodo, getTodos, patchTodo, getUploadUrl, uploadFile } from '../api/todos-api'
@@ -66,7 +69,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     })
   }
 
-  onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
+  onTodoCreate = async () => {
     try {
       this.setState({
         loadingTodos: true
@@ -91,11 +94,16 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
       const todos = await getTodos(this.props.auth.getIdToken())
       this.setState({
         todos,
-        loadingTodos: false
+        loadingTodos: false,
+        newTodoName: "",
+        newTodoDetail: "",
       })
 
     } catch(e) {
       console.log(e)
+      this.setState({
+        loadingTodos: false
+      })
       alert('Todo creation failed')
     }
   }
@@ -166,44 +174,37 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
   renderCreateTodoInput() {
     return (
       <Grid divided='vertically'>
-        <Grid.Row columns={2}>
-          <Grid.Column width={12} floated="left">
-            <Input
-              action={{
-                color: 'teal',
-                labelPosition: 'left',
-                icon: 'add',
-                content: 'New task',
-                onClick: this.onTodoCreate
-              }}
-              fluid
-              actionPosition="left"
-              placeholder="To change the world..."
-              onChange={this.handleNameChange}
-            />
-          </Grid.Column>
-          <Grid.Column width={4} floated="right">
-          <input
-                type="file"
-                accept="image/*"
-                placeholder="Image to upload"
-                onChange={this.handleFileChange}
-              />
-          </Grid.Column>
+        <Grid.Row>
           <Grid.Column width={16}>
-          <Input
-            action={{
-              color: 'teal',
-              labelPosition: 'left',
-              icon: 'star',
-              content: 'Detail'
-            }}
-            fluid
-            actionPosition="left"
-            placeholder="Description detail ..."
-            onChange={this.handleDetailChange}
-          />
-        </Grid.Column>
+            <Form >
+              <Form.Field>
+                <label>Task Name</label>
+                <Input
+                  placeholder="To change the world..."
+                  value={this.state.newTodoName}
+                  onChange={this.handleNameChange}
+                />
+              </Form.Field>
+              <Form.Field>
+                <label>Detail</label>
+                <Input
+                  value={this.state.newTodoDetail}
+                  placeholder="Description detail ..."
+                  onChange={this.handleDetailChange}
+                />
+              </Form.Field>
+              <Form.Field>
+              <label>Cover</label>
+              <input
+                    type="file"
+                    accept="image/*"
+                    placeholder="Image to upload"
+                    onChange={this.handleFileChange}
+                  />
+              </Form.Field>
+              <Button onClick={() => this.onTodoCreate()} disabled={this.state.loadingTodos} color='green'>Create</Button>
+            </Form>
+          </Grid.Column>
           <Grid.Column width={16}>
             <Divider />
           </Grid.Column>
@@ -232,52 +233,41 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
 
   renderTodosList() {
     return (
-      <Grid padded columns={2}>
+      
+      <Grid padded>
+        <Item.Group>
         {this.state.todos.map((todo, pos) => {
-          return (
-            <Grid.Row key={todo.todoId}>
-              <Grid.Column width={1} verticalAlign="middle">
+          return(
+            <Item>
+              {todo.attachmentUrl && (<Item.Image size='small' src={todo.attachmentUrl} />)}
+              <Item.Content>
+                <Item.Header as='a'>{todo.name}</Item.Header>
+                <Item.Description>{todo.detail}</Item.Description>
+                <Item.Description>{todo.dueDate}</Item.Description>
+                <Item.Extra>
                 <Checkbox
-                  onChange={() => this.onTodoCheck(pos)}
-                  checked={todo.done}
-                />
-              </Grid.Column>
-              <Grid.Column width={10} verticalAlign="middle">
-                {todo.name}
-              </Grid.Column>
-              <Grid.Column width={10} verticalAlign="middle">
-                {todo.detail}
-              </Grid.Column>
-              <Grid.Column width={3} floated="right">
-                {todo.dueDate}
-              </Grid.Column>
-              <Grid.Column width={1} floated="right">
+                    onChange={() => this.onTodoCheck(pos)}
+                    checked={todo.done}
+                  />
                 <Button
-                  icon
-                  color="blue"
-                  onClick={() => this.onEditButtonClick(todo.todoId)}
-                >
-                  <Icon name="pencil" />
-                </Button>
-              </Grid.Column>
-              <Grid.Column width={1} floated="right">
-                <Button
-                  icon
-                  color="red"
-                  onClick={() => this.onTodoDelete(todo.todoId)}
-                >
-                  <Icon name="delete" />
-                </Button>
-              </Grid.Column>
-              {todo.attachmentUrl && (
-                <Image src={todo.attachmentUrl} size="small" wrapped />
-              )}
-              <Grid.Column width={16}>
-                <Divider />
-              </Grid.Column>
-            </Grid.Row>
-          )
+                    icon
+                    color="blue"
+                    onClick={() => this.onEditButtonClick(todo.todoId)}
+                  >
+                    <Icon name="pencil" />
+                  </Button>
+                  <Button
+                    icon
+                    color="red"
+                    onClick={() => this.onTodoDelete(todo.todoId)}
+                  >
+                    <Icon name="delete" />
+                  </Button>
+                </Item.Extra>
+              </Item.Content>
+            </Item>)
         })}
+        </Item.Group>
       </Grid>
     )
   }
