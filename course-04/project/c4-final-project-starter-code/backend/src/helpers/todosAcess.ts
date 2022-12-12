@@ -54,9 +54,10 @@ export class TodosAccess {
                 userId: userId,
                 todoId: todoId
             },
-            UpdateExpression: 'set #dynobase_name = :name, dueDate = :dueDate, done = :done',
+            UpdateExpression: 'set #dynobase_name = :name, detail = :detail, dueDate = :dueDate, done = :done',
             ExpressionAttributeValues: {
                 ':name': todoUpdate.name,
+                ':detail': todoUpdate.detail,
                 ':dueDate': todoUpdate.dueDate,
                 ':done': todoUpdate.done,
             },

@@ -26,7 +26,8 @@ interface TodosProps {
 interface TodosState {
   todos: Todo[]
   newTodoName: string
-  loadingTodos: boolean,
+  newTodoDetail: string
+  loadingTodos: boolean
   file: any
   uploadState: UploadState
 }
@@ -41,6 +42,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
   state: TodosState = {
     todos: [],
     newTodoName: '',
+    newTodoDetail: '',
     loadingTodos: true,
     file: undefined,
     uploadState: UploadState.NoUpload
@@ -48,6 +50,10 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
 
   handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ newTodoName: event.target.value })
+  }
+
+  handleDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ newTodoDetail: event.target.value })
   }
 
   onEditButtonClick = (todoId: string) => {
@@ -68,6 +74,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
       const dueDate = this.calculateDueDate()
       const newTodo = await createTodo(this.props.auth.getIdToken(), {
         name: this.state.newTodoName,
+        detail: this.state.newTodoDetail,
         dueDate
       })
 
@@ -109,6 +116,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
       const todo = this.state.todos[pos]
       await patchTodo(this.props.auth.getIdToken(), todo.todoId, {
         name: todo.name,
+        detail: todo.detail,
         dueDate: todo.dueDate,
         done: !todo.done
       })
@@ -183,6 +191,20 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
               />
           </Grid.Column>
           <Grid.Column width={16}>
+          <Input
+            action={{
+              color: 'teal',
+              labelPosition: 'left',
+              icon: 'star',
+              content: 'Detail'
+            }}
+            fluid
+            actionPosition="left"
+            placeholder="Description detail ..."
+            onChange={this.handleDetailChange}
+          />
+        </Grid.Column>
+          <Grid.Column width={16}>
             <Divider />
           </Grid.Column>
         </Grid.Row>
@@ -222,6 +244,9 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
               </Grid.Column>
               <Grid.Column width={10} verticalAlign="middle">
                 {todo.name}
+              </Grid.Column>
+              <Grid.Column width={10} verticalAlign="middle">
+                {todo.detail}
               </Grid.Column>
               <Grid.Column width={3} floated="right">
                 {todo.dueDate}
